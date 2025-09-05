@@ -1,18 +1,17 @@
 from BBDD.connect import basic_exec, ultima_id, get_single, update_single
+from tkinter import messagebox
 import customtkinter as ct
 
 
 class Cliente:
 
-    def __init__(
-        self, telefono: str, nombre: str, direccion: str, localidad: str, provincia: str
-    ):
+    def __init__(self):
 
-        self.nombre = nombre
-        self.telefono = telefono
-        self.direccion = direccion
-        self.localidad = localidad
-        self.provincia = provincia
+        self.nombre = ""
+        self.telefono = 0
+        self.direccion = ""
+        self.localidad = ""
+        self.provincia = ""
         self.nif = 0
         self.contacto = ""
         self.cp = 0
@@ -24,7 +23,32 @@ class Cliente:
     def __setitem__(self, key, value):
         return setattr(self, key, value)
 
-    def save_client(self):
+    def create_client(
+        self, numero: int, nombre: str, direccion: str, localidad: str, provincia: str
+    ):
+        self.numero = numero
+        self.nombre = nombre
+        self.direccion = direccion
+        self.localidad = localidad
+        self.provincia = provincia
+        try:
+
+            self.__save_client()
+            messagebox.showinfo(
+                title="Sistema de Gestión Todo Aqua",
+                message="Usuario correctamente creado.",
+            )
+
+        except Exception as error:
+
+            print(error)
+            messagebox.showerror(
+                title="Sistema de Gestión Todo Aqua",
+                message="Error al crear usuario. Contacte al administrador.",
+            )
+            return
+
+    def __save_client(self):
 
         query = "INSERT INTO CLIENTES (telefono, nombre, direccion, localidad, provincia) VALUES (%s, %s, %s, %s, %s);"
 
@@ -43,7 +67,7 @@ class Cliente:
         print("\nCliente registrado correctamente\n")
         return ultima_id(query)
 
-    def cliente_object(self, id_cliente):
+    def object_cliente(self, id_cliente):
 
         query = "SELECT * FROM CLIENTES WHERE id_cliente = %s"
 
@@ -51,13 +75,13 @@ class Cliente:
 
         client = get_single(query, param)
 
-        client_object = Cliente(
-            client["telefono"],
-            client["nombre"],
-            client["direccion"],
-            client["localidad"],
-            client["provincia"],
-        )
+        client_object = Cliente()
+
+        client_object.telefono = (client["telefono"],)
+        client_object.nombre = (client["nombre"],)
+        client_object.direccion = (client["direccion"],)
+        client_object.localidad = (client["localidad"],)
+        client_object.provincia = (client["provincia"],)
 
         if not client["nif"]:
 

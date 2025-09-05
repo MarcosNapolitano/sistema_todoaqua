@@ -1,10 +1,10 @@
 import customtkinter as ct
 from tkinter import messagebox
-from Utils.search_client import search_client
-from Services.Presupuesto import Presupuesto_Fuga_Piscinas
-from Services.Presupuesto import Presupuesto_Todo_Fugas
-from Services.Presupuesto import Presupuesto_Repa
-from Services.Presupuesto import Presupuesto_Lamina
+from Services.search_client import search_client
+from Models.Presupuesto import Presupuesto_Fuga_Piscinas
+from Models.Presupuesto import Presupuesto_Todo_Fugas
+from Models.Presupuesto import Presupuesto_Repa
+from Models.Presupuesto import Presupuesto_Lamina
 
 
 class Pres_Frame:
@@ -33,12 +33,13 @@ class Pres_Frame:
 
     def create_presupuesto_piscina(self):
 
-        cliente = self.presupuesto_frame_entry_1.get()
-        largo = self.presupuesto_frame_entry_2.get()
-        ancho = self.presupuesto_frame_entry_3.get()
-        distancia = self.presupuesto_frame_entry_4.get()
-        skimmer = self.presupuesto_frame_label_5.get()
-        jacuzzi = self.presupuesto_frame_label_6.get()
+        cliente = int(self.presupuesto_frame_entry_1.get())
+        largo = int(self.presupuesto_frame_entry_2.get())
+        ancho = int(self.presupuesto_frame_entry_3.get())
+        distancia = int(self.presupuesto_frame_entry_4.get())
+        # to do: check label or entry
+        skimmer = bool(self.presupuesto_frame_label_5.get())
+        jacuzzi = bool(self.presupuesto_frame_label_6.get())
 
         if cliente == "" or largo == "" or ancho == "" or distancia == "":
 
@@ -46,40 +47,21 @@ class Pres_Frame:
             return
 
         self.presupuesto_frame_label_100.configure(text="")
+
         id_cliente = search_client(cliente)
 
         if not id_cliente:
             return
 
-        nuevo_presupuesto = Presupuesto_Fuga_Piscinas(
+        presupuesto = Presupuesto_Fuga_Piscinas()
+        presupuesto.create_presupuesto(
             distancia, largo, ancho, skimmer, jacuzzi, id_cliente
         )
-
-        nuevo_presupuesto.id_cliente = id_cliente
-        messagebox.showinfo(
-            title="Sistema de Gestión Todo Aqua",
-            message=f"El presupuesto es de: €{nuevo_presupuesto.tarifar()}",
-        )
-
-        try:
-            nuevo_presupuesto.save_presupuesto("fuga piscinas")
-            messagebox.showinfo(
-                title="Sistema de Gestión Todo Aqua",
-                message=f"Presupuesto guardado correctamente.",
-            )
-            del nuevo_presupuesto
-
-        except:
-            messagebox.showerror(
-                title="Sistema de Gestión Todo Aqua",
-                message=f"Error al crear presupuesto. Contacte al administrador.",
-            )
-            del nuevo_presupuesto
-            return
 
         self.presupuesto_frame_entry_1.delete(0, "end")
         self.presupuesto_frame_entry_2.delete(0, "end")
         self.presupuesto_frame_entry_3.delete(0, "end")
+        # to do: check label or entry
         self.presupuesto_frame_entry_4.delete(0, "end")
         self.presupuesto_frame_label_5.deselect()
         self.presupuesto_frame_label_6.deselect()
@@ -88,15 +70,15 @@ class Pres_Frame:
 
     def create_presupuesto_repa(self):
 
-        cliente = self.presupuesto_frame_entry_1.get()
+        cliente = int(self.presupuesto_frame_entry_1.get())
         concepto_1 = self.presupuesto_frame_entry_2.get()
-        precio_1 = self.presupuesto_frame_entry_3.get()
+        precio_1 = float(self.presupuesto_frame_entry_3.get())
         concepto_2 = self.presupuesto_frame_entry_4.get()
-        precio_2 = self.presupuesto_frame_entry_5.get()
+        precio_2 = float(self.presupuesto_frame_entry_5.get())
         concepto_3 = self.presupuesto_frame_entry_6.get()
-        precio_3 = self.presupuesto_frame_entry_7.get()
+        precio_3 = float(self.presupuesto_frame_entry_7.get())
         concepto_4 = self.presupuesto_frame_entry_8.get()
-        precio_4 = self.presupuesto_frame_entry_9.get()
+        precio_4 = float(self.presupuesto_frame_entry_9.get())
 
         if cliente == "" or concepto_1 == "" or precio_1 == "":
             self.presupuesto_frame_label_100.configure(text="Faltan Datos.")
@@ -108,40 +90,14 @@ class Pres_Frame:
         if not id_cliente:
             return
 
-        nuevo_presupuesto = Presupuesto_Repa(id_cliente)
-
-        nuevo_presupuesto.concepto.append((concepto_1, float(precio_1)))
-
-        if concepto_2 != "" and precio_2 != "":
-            nuevo_presupuesto.concepto.append((concepto_2, float(precio_2)))
-
-        if concepto_3 != "" and precio_3 != "":
-            nuevo_presupuesto.concepto.append((concepto_3, float(precio_3)))
-
-        if concepto_4 != "" and precio_4 != "":
-            nuevo_presupuesto.concepto.append((concepto_4, float(precio_4)))
-
-        nuevo_presupuesto.id_cliente = id_cliente
-        messagebox.showinfo(
-            title="Sistema de Gestión Todo Aqua",
-            message=f"El presupuesto es de: €{nuevo_presupuesto.tarifar()}",
-        )
-
-        try:
-            nuevo_presupuesto.save_presupuesto("reparación")
-            messagebox.showinfo(
-                title="Sistema de Gestión Todo Aqua",
-                message=f"Presupuesto guardado correctamente.",
-            )
-            del nuevo_presupuesto
-
-        except:
-            messagebox.showerror(
-                title="Sistema de Gestión Todo Aqua",
-                message=f"Error al crear presupuesto. Contacte al administrador.",
-            )
-            del nuevo_presupuesto
-            return
+        conceptos = [
+            (concepto_1, precio_1),
+            (concepto_2, precio_2),
+            (concepto_3, precio_3),
+            (concepto_4, precio_4),
+        ]
+        presupuesto = Presupuesto_Repa()
+        presupuesto.create_presupuesto(id_cliente, conceptos)
 
         self.presupuesto_frame_entry_1.delete(0, "end")
         self.presupuesto_frame_entry_1.delete(0, "end")
@@ -175,18 +131,18 @@ class Pres_Frame:
                 )
                 return False
 
-        cliente = self.presupuesto_frame_entry_1.get()
-        metros = self.presupuesto_frame_entry_2.get()
-        tarifa = self.presupuesto_frame_entry_3.get()
+        cliente = int(self.presupuesto_frame_entry_1.get())
+        metros = float(self.presupuesto_frame_entry_2.get())
+        tarifa = float(self.presupuesto_frame_entry_3.get())
         modelo = self.presupuesto_frame_entry_4.get()
-        impulsiones = self.presupuesto_frame_entry_5.get()
-        barrefondos = self.presupuesto_frame_entry_6.get()
-        skimmers = self.presupuesto_frame_entry_7.get()
-        focos = self.presupuesto_frame_entry_8.get()
-        sumideros = self.presupuesto_frame_entry_9.get()
-        sumideros_grande = self.presupuesto_frame_entry_10.get()
+        impulsiones = int(self.presupuesto_frame_entry_5.get())
+        barrefondos = int(self.presupuesto_frame_entry_6.get())
+        skimmers = int(self.presupuesto_frame_entry_7.get())
+        focos = int(self.presupuesto_frame_entry_8.get())
+        sumideros = int(self.presupuesto_frame_entry_9.get())
+        sumideros_grande = int(self.presupuesto_frame_entry_10.get())
         concepto_1 = self.presupuesto_frame_entry_11.get()
-        precio_1 = self.presupuesto_frame_entry_12.get()
+        precio_1 = float(self.presupuesto_frame_entry_12.get())
 
         if cliente == "" or metros == "":
             self.presupuesto_frame_label_100.configure(text="Faltan Datos.")
@@ -197,7 +153,7 @@ class Pres_Frame:
             if not tarifa:
                 return
         else:
-            tarifa = 75
+            tarifa = 75.0
 
         if modelo == "":
             modelo = "A Definir"
@@ -213,93 +169,17 @@ class Pres_Frame:
         if not metros:
             return
 
-        nuevo_presupuesto = Presupuesto_Lamina(metros, modelo, tarifa, id_cliente)
-
-        nuevo_presupuesto.id_cliente = id_cliente
-
-        if impulsiones != "":
-
-            impulsiones = check_dec_point(impulsiones, "Impulsiones", True)
-
-            if not impulsiones:
-                return
-            nuevo_presupuesto.impulsion = impulsiones
-
-        if barrefondos != "":
-
-            barrefondos = check_dec_point(barrefondos, "Barrefondos", True)
-
-            if not barrefondos:
-                return
-            nuevo_presupuesto.barrefondo = barrefondos
-
-        if skimmers != "":
-
-            skimmers = check_dec_point(skimmers, "Skimmers", True)
-
-            if not skimmers:
-                return
-            nuevo_presupuesto.skimmers = skimmers
-
-        if sumideros != "":
-
-            sumideros = check_dec_point(sumideros, "Sumideros", True)
-
-            if not sumideros:
-                return
-            nuevo_presupuesto.sumidero = sumideros
-
-        if sumideros_grande != "":
-
-            sumideros_grande = check_dec_point(
-                sumideros_grande, "Sumideros Grandes", True
-            )
-
-            if not sumideros_grande:
-                return
-            nuevo_presupuesto.sumidero_grande = sumideros_grande
-
-        if focos != "":
-
-            focos = check_dec_point(focos, "Focos", True)
-
-            if not focos:
-                return
-            nuevo_presupuesto.nicho = focos
-
-        if concepto_1 != "" and precio_1 != "":
-
-            nuevo_presupuesto.otros = 1
-            precio_1 = check_dec_point(precio_1, "Precio", True)
-
-            if not precio_1:
-                return
-
-            nuevo_presupuesto.otros_concepto = concepto_1
-            nuevo_presupuesto.otros_precio = precio_1
-
-        nuevo_presupuesto.id_cliente = id_cliente
-        messagebox.showinfo(
-            title="Sistema de Gestión Todo Aqua",
-            message=f"El presupuesto es de: €{nuevo_presupuesto.tarifar()}",
-        )
-
-        try:
-            nuevo_presupuesto.save_presupuesto("lámina armada")
-            messagebox.showinfo(
-                title="Sistema de Gestión Todo Aqua",
-                message=f"Presupuesto guardado correctamente.",
-            )
-            del nuevo_presupuesto
-
-        except Exception as error:
-            print(error)
-            messagebox.showerror(
-                title="Sistema de Gestión Todo Aqua",
-                message=f"Error al crear presupuesto. Contacte al administrador.",
-            )
-            del nuevo_presupuesto
-            return
+        nuevo_presupuesto = Presupuesto_Lamina()
+        nuevo_presupuesto.impulsion = impulsiones
+        nuevo_presupuesto.barrefondo = barrefondos
+        nuevo_presupuesto.skimmers = skimmers
+        nuevo_presupuesto.sumidero = sumideros
+        nuevo_presupuesto.sumidero_grande = sumideros_grande
+        nuevo_presupuesto.nicho = focos
+        nuevo_presupuesto.otros = 1
+        nuevo_presupuesto.otros_concepto = concepto_1
+        nuevo_presupuesto.otros_precio = precio_1
+        nuevo_presupuesto.create_presupuesto(metros, modelo, tarifa, id_cliente)
 
         self.presupuesto_frame_entry_1.delete(0, "end")
         self.presupuesto_frame_entry_1.delete(0, "end")
@@ -319,9 +199,9 @@ class Pres_Frame:
 
     def create_presupuesto_fuga(self):
 
-        cliente = self.presupuesto_frame_entry_1.get()
-        superficie = self.presupuesto_frame_entry_2.get()
-        distancia = self.presupuesto_frame_entry_3.get()
+        cliente = int(self.presupuesto_frame_entry_1.get())
+        superficie = int(self.presupuesto_frame_entry_2.get())
+        distancia = int(self.presupuesto_frame_entry_3.get())
         tipo = self.presupuesto_frame_entry_4.get()
 
         if cliente == "" or distancia == "":
@@ -329,7 +209,7 @@ class Pres_Frame:
             self.presupuesto_frame_label_100.configure(text="Faltan Datos.")
             return
 
-        if superficie == "":
+        if not superficie:
             superficie = 90
 
         self.presupuesto_frame_label_100.configure(text="")
@@ -338,38 +218,13 @@ class Pres_Frame:
         if not id_cliente:
             return
 
-        nuevo_presupuesto = Presupuesto_Todo_Fugas(
-            distancia, tipo, superficie, id_cliente
-        )
-
-        nuevo_presupuesto.id_cliente = id_cliente
-        messagebox.showinfo(
-            title="Sistema de Gestión Todo Aqua",
-            message=f"El presupuesto es de: €{nuevo_presupuesto.tarifar()}",
-        )
-
-        try:
-            nuevo_presupuesto.save_presupuesto("todo fugas")
-            messagebox.showinfo(
-                title="Sistema de Gestión Todo Aqua",
-                message=f"Presupuesto guardado correctamente.",
-            )
-            del nuevo_presupuesto
-
-        except:
-            messagebox.showerror(
-                title="Sistema de Gestión Todo Aqua",
-                message=f"Error al crear presupuesto. Contacte al administrador.",
-            )
-            del nuevo_presupuesto
-            return
+        presupuesto = Presupuesto_Todo_Fugas()
+        presupuesto.create_presupuesto(id_cliente, superficie, distancia, tipo)
 
         self.presupuesto_frame_entry_1.delete(0, "end")
         self.presupuesto_frame_entry_2.delete(0, "end")
         self.presupuesto_frame_entry_3.delete(0, "end")
         self.presupuesto_frame_entry_4.set("Doméstica")
-
-        return
 
     # user choice
     def change_presupuesto(self, option):
@@ -581,7 +436,7 @@ class Pres_Frame:
         )
 
         # field 1
-        # Ver como hago que el cliente que se busca siempre exista
+        # to do: Ver como hago que el cliente que se busca siempre exista
         # o dar resultados similares
 
         self.presupuesto_frame_label_2 = ct.CTkLabel(

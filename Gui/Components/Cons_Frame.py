@@ -1,19 +1,7 @@
 import customtkinter as ct
-from tkinter import messagebox
 from BBDD.connect import get_all
 from BBDD.connect import get_single
-from BBDD.pres_object import (
-    pres_object_repa,
-    pres_object_piscina,
-    pres_object_lamina,
-    pres_object_fuga,
-)
-from BBDD.cliente_object import cliente_object
-from Utils.generar_presupuesto_fuga_piscinas import generar_presupuesto_fuga_piscinas
-from Utils.generar_presupuesto_lamina import generar_presupuesto_lamina
-from Utils.generar_presupuesto_repa import generar_presupuesto_repa
-from Utils.generar_presupuesto_todo_fugas import generar_presupuesto_todo_fugas
-
+from Services.generar_presupuesto import generar_presupuesto
 
 class Cons_Frame:
 
@@ -123,91 +111,10 @@ class Cons_Frame:
 
     def consulta_presupuestos(self):
 
-        def generar_presupuesto():
+        id_presupuesto = int(self.entry1.get())
 
-            id_pres = self.entry1.get()
-
-            res = get_single(
-                "SELECT TIPO, ID_CLIENTE FROM PRESUPUESTOS WHERE ID_PRESUPUESTO = %s",
-                (id_pres,),
-            )
-            tipo = res[0]
-            cliente = cliente_object(res[1])
-
-            match tipo:
-                case "fuga piscinas":
-                    presupuesto = pres_object_piscina(id_pres)
-                    try:
-                        generar_presupuesto_fuga_piscinas(cliente, presupuesto)
-
-                    except:
-                        messagebox.showerror(
-                            title="Sistema de Gestión Todo Aqua",
-                            message=f"Error al generar presupuesto. Contacte al administrador.",
-                        )
-
-                        return
-
-                    del cliente
-                    del presupuesto
-
-                case "todo fugas":
-
-                    presupuesto = pres_object_fuga(id_pres)
-                    try:
-                        generar_presupuesto_todo_fugas(cliente, presupuesto)
-
-                    except:
-                        messagebox.showerror(
-                            title="Sistema de Gestión Todo Aqua",
-                            message=f"Error al generar presupuesto. Contacte al administrador.",
-                        )
-
-                        return
-
-                    del cliente
-                    del presupuesto
-
-                case "reparación":
-
-                    presupuesto = pres_object_repa(id_pres)
-                    try:
-                        generar_presupuesto_repa(cliente, presupuesto)
-
-                    except:
-                        messagebox.showerror(
-                            title="Sistema de Gestión Todo Aqua",
-                            message=f"Error al generar presupuesto. Contacte al administrador.",
-                        )
-
-                        return
-
-                    del cliente
-                    del presupuesto
-
-                case "lámina armada":
-
-                    presupuesto = pres_object_lamina(id_pres)
-                    try:
-                        generar_presupuesto_lamina(cliente, presupuesto)
-
-                    except:
-                        messagebox.showerror(
-                            title="Sistema de Gestión Todo Aqua",
-                            message=f"Error al generar presupuesto. Contacte al administrador.",
-                        )
-
-                        return
-
-                    del cliente
-                    del presupuesto
-
-            messagebox.showinfo(
-                title="Sistema de Gestión Todo Aqua",
-                message=f"Presupuesto generado correctamente.",
-            )
-
-            return
+        def request_presupuesto():
+            generar_presupuesto(id_presupuesto)
 
         self.tabview.add("Presupuestos")
 
@@ -335,6 +242,6 @@ class Cons_Frame:
         self.entry1 = ct.CTkEntry(self.imprimir, placeholder_text="Ingrese número")
         self.entry1.grid(column=0, row=0, padx=10, pady=10)
         self.button1 = ct.CTkButton(
-            self.imprimir, text="Imprimir Presupuesto", command=generar_presupuesto
+            self.imprimir, text="Imprimir Presupuesto", command=request_presupuesto
         )
         self.button1.grid(column=1, row=0, padx=10, pady=10)

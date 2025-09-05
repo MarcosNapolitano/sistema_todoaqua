@@ -1,6 +1,5 @@
-from psycopg2 import Date
-from Interface.llamada import presupuesto_todo_fugas
-from Interface.presupuesto import presupuesto
+from tkinter import messagebox
+from Models.Cliente import Cliente
 from Models.Tarifas import tarifas_fuga_piscinas
 from Models.Tarifas import tarifas_todo_fugas
 from Models.Tarifas import tarifas_elementos_lamina
@@ -10,32 +9,59 @@ from math import floor
 
 class Presupuesto:
 
-    def __init__(self, id_cliente: int):
-        self.id_cliente = id_cliente
-        self.fecha = Date
-        self.precio = 0.0
-        self.total = 0.0
+    def __init__(self):
+        self.id_cliente: int = 0
+        self.fecha: str = ""
+        self.precio: float = 0.0
+        self.total: float = 0.0
 
 
 class Presupuesto_Fuga_Piscinas(Presupuesto):
 
-    def __init__(
+    def __init__(self):
+        super().__init__()
+        self.distancia: int = 0
+        self.largo: int = 0
+        self.ancho: int = 0
+        self.skimmer: bool = False
+        self.jacuzzi: bool = False
+
+    def create_presupuesto(
         self,
-        distancia: str,
+        distancia: int,
         largo: int,
         ancho: int,
         skimmer: bool,
         jacuzzi: bool,
         id_cliente: int,
     ):
-        super().__init__(id_cliente)
-        self.distancia = int(distancia)
-        self.largo = int(largo)
-        self.ancho = int(ancho)
+        self.distancia = distancia
+        self.largo = largo
+        self.ancho = ancho
         self.skimmer = skimmer
         self.jacuzzi = jacuzzi
+        self.id_cliente = id_cliente
 
-    def tarifar(self):
+        messagebox.showinfo(
+            title="Sistema de Gestión Todo Aqua",
+            message=f"El presupuesto es de: €{self.__tarifar()}",
+        )
+
+        try:
+            self.__save_presupuesto("fuga piscinas")
+
+            messagebox.showinfo(
+                title="Sistema de Gestión Todo Aqua",
+                message=f"Presupuesto guardado correctamente.",
+            )
+
+        except:
+            messagebox.showerror(
+                title="Sistema de Gestión Todo Aqua",
+                message=f"Error al crear presupuesto. Contacte al administrador.",
+            )
+
+    def __tarifar(self):
 
         for i in tarifas_fuga_piscinas.keys():
 
@@ -53,12 +79,12 @@ class Presupuesto_Fuga_Piscinas(Presupuesto):
                 break
 
         if not self.precio:
-            # to do: precio is not str
-            self.precio = "Consultar"
+            self.precio = 999999.99
+            return "Consultar"
 
         return self.total
 
-    def save_presupuesto(self, tipo):
+    def __save_presupuesto(self, tipo):
 
         query = "INSERT INTO PRESUPUESTOS (id_cliente, precio, total, tipo, distancia, largo, ancho, skimmer, jacuzzi) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"
 
@@ -82,38 +108,67 @@ class Presupuesto_Fuga_Piscinas(Presupuesto):
 
     def object_presupuesto_piscina(self, id_pres):
 
-        query_str = "SELECT * FROM PRESUPUESTOS WHERE ID_PRESUPUESTO = %s"
-        data = (id_pres,)
+        query = "SELECT * FROM PRESUPUESTOS WHERE ID_PRESUPUESTO = %s"
+        param = (id_pres,)
 
-        query = get_single(query_str, data)
+        presupuesto = get_single(query, param)
 
-        presupuesto = Presupuesto_Fuga_Piscinas(
-            query["distancia"],
-            query["largo"],
-            query["ancho"],
-            query["skimmer"],
-            query["jacuzzi"],
-            query["id_cliente"],
-        )
+        presupuesto_object = Presupuesto_Fuga_Piscinas()
 
-        presupuesto.precio = query["precio"]
-        presupuesto.total = query["total"]
-        presupuesto.fecha = query["fecha"]
+        presupuesto_object.id_cliente = int(presupuesto["id_cliente"])
+        presupuesto_object.distancia = int(presupuesto["distancia"])
+        presupuesto_object.largo = int(presupuesto["largo"])
+        presupuesto_object.ancho = int(presupuesto["ancho"])
+        presupuesto_object.skimmer = bool(presupuesto["skimmer"])
+        presupuesto_object.jacuzzi = bool(presupuesto["jacuzzi"])
+        presupuesto_object.precio = float(presupuesto["precio"])
+        presupuesto_object.total = float(presupuesto["total"])
+        presupuesto_object.fecha = presupuesto["fecha"]
 
-        return presupuesto
+        return presupuesto_object
+
+    def generar_archivo_presupuesto(
+        self, cliente: "Cliente", presupuesto: "Presupuesto_Fuga_Piscinas"
+    ):
+        pass
 
 
 class Presupuesto_Todo_Fugas(Presupuesto):
 
-    def __init__(
-        self, distancia: int, tipo_tuberia: int, id_cliente: int, superficie=90
+    def __init__(self):
+        super().__init__()
+        self.distancia: int = 0
+        self.superficie: int = 90
+        self.tipo_tuberia: str = ""
+
+    def create_presupuesto(
+        self, cliente: int, superficie: int, distancia: int, tipo_tuberia: str
     ):
-        super().__init__(id_cliente)
-        self.distancia = int(distancia)
-        self.superficie = int(superficie)
+
+        self.id_cliente = cliente
+        self.superficie = superficie
+        self.distancia = distancia
         self.tipo_tuberia = tipo_tuberia
 
-    def tarifar(self):
+        messagebox.showinfo(
+            title="Sistema de Gestión Todo Aqua",
+            message=f"El presupuesto es de: €{self.__tarifar()}",
+        )
+
+        try:
+            self.__save_presupuesto("todo fugas")
+            messagebox.showinfo(
+                title="Sistema de Gestión Todo Aqua",
+                message=f"Presupuesto guardado correctamente.",
+            )
+
+        except:
+            messagebox.showerror(
+                title="Sistema de Gestión Todo Aqua",
+                message=f"Error al crear presupuesto. Contacte al administrador.",
+            )
+
+    def __tarifar(self):
 
         for i in tarifas_todo_fugas.keys():
 
@@ -124,11 +179,12 @@ class Presupuesto_Todo_Fugas(Presupuesto):
                 break
 
         if not self.precio:
-            self.precio = "Consultar"
+            self.precio = 999999.99
+            return "Consultar"
 
         return self.total
 
-    def save_presupuesto(self, tipo):
+    def __save_presupuesto(self, tipo):
 
         query = "INSERT INTO PRESUPUESTOS (id_cliente, precio, total, tipo, skimmer, superficie, tipo_tuberia, distancia) VALUES (%s, %s, %s, %s, %s, %s, %s);"
 
@@ -154,49 +210,80 @@ class Presupuesto_Todo_Fugas(Presupuesto):
         query_str = "SELECT * FROM PRESUPUESTOS WHERE ID_PRESUPUESTO = %s"
         data = (id_pres,)
 
-        query = get_single(query_str, data)
+        presupuesto = get_single(query_str, data)
 
-        presupuesto = Presupuesto_Todo_Fugas(
-            query["distancia"],
-            query["tipo_tuberia"],
-            query["id_cliente"],
-            query["superficie"],
-        )
+        presupuesto_object = Presupuesto_Todo_Fugas()
 
-        presupuesto.precio = query["precio"]
-        presupuesto.total = query["total"]
-        presupuesto.fecha = query["fecha"]
+        presupuesto_object.id_cliente = int(presupuesto["id_cliente"])
+        presupuesto_object.distancia = int(presupuesto["distancia"])
+        presupuesto_object.tipo_tuberia = presupuesto["tipo_tuberia"]
+        presupuesto_object.superficie = int(presupuesto["superficie"])
+        presupuesto_object.precio = float(presupuesto["precio"])
+        presupuesto_object.total = float(presupuesto["total"])
+        presupuesto_object.fecha = presupuesto["fecha"]
 
-        return presupuesto
+        return presupuesto_object
+
+    def generar_archivo_presupuesto(
+        self, cliente: "Cliente", presupuesto: "Presupuesto_Todo_Fugas"
+    ):
+        pass
 
 
 class Presupuesto_Lamina(Presupuesto):
 
-    def __init__(self, metros: float, id_cliente: int, modelo="A Definir", tarifa=75):
-        super().__init__(id_cliente)
-        self.metros = float(metros)
-        self.impulsion = 0
-        self.impulsion_precio = tarifas_elementos_lamina["impulsor"]
-        self.barrefondo = 0
-        self.barrefondo_precio = tarifas_elementos_lamina["barrefondo"]
-        self.skimmers = 0
-        self.skimmers_precio = tarifas_elementos_lamina["skimmer"]
-        self.sumidero = 0
-        self.sumidero_precio = tarifas_elementos_lamina["sumidero"]
-        self.sumidero_grande = 0
-        self.sumidero_grande_precio = tarifas_elementos_lamina["sumidero_grande"]
-        self.nicho = 0
-        self.nicho_precio = tarifas_elementos_lamina["nicho"]
-        self.otros = 0
-        self.otros_precio = 0.0
-        self.otros_concepto = ""
-        self.primera_partida = 0.0
-        self.segunda_partida = 0.0
-        self.tercera_partida = 0.0
-        self.modelo = modelo
-        self.tarifa = float(tarifa)
+    def __init__(self):
+        super().__init__()
+        self.metros: float = 0.0
+        self.impulsion: int = 0
+        self.impulsion_precio: float = tarifas_elementos_lamina["impulsor"]
+        self.barrefondo: int = 0
+        self.barrefondo_precio: float = tarifas_elementos_lamina["barrefondo"]
+        self.skimmers: int = 0
+        self.skimmers_precio: float = tarifas_elementos_lamina["skimmer"]
+        self.sumidero: int = 0
+        self.sumidero_precio: float = tarifas_elementos_lamina["sumidero"]
+        self.sumidero_grande: int = 0
+        self.sumidero_grande_precio: float = tarifas_elementos_lamina["sumidero_grande"]
+        self.nicho: int = 0
+        self.nicho_precio: float = tarifas_elementos_lamina["nicho"]
+        self.otros: int = 0
+        self.otros_precio: float = 0.0
+        self.otros_concepto: str = ""
+        self.primera_partida: float = 0.0
+        self.segunda_partida: float = 0.0
+        self.tercera_partida: float = 0.0
+        self.modelo: str = "A Definir"
+        self.tarifa: float = 75.0
 
-    def tarifar(self):
+    def create_presupuesto(
+        self, metros: float, modelo: str, tarifa: float, id_cliente: int
+    ):
+        self.metros = metros
+        self.modelo = modelo
+        self.tarifa = tarifa
+        self.id_cliente = id_cliente
+
+        messagebox.showinfo(
+            title="Sistema de Gestión Todo Aqua",
+            message=f"El presupuesto es de: €{self.__tarifar()}",
+        )
+
+        try:
+            self.__save_presupuesto("lamina armada")
+            messagebox.showinfo(
+                title="Sistema de Gestión Todo Aqua",
+                message=f"Presupuesto guardado correctamente.",
+            )
+
+        except Exception as error:
+            print(error)
+            messagebox.showerror(
+                title="Sistema de Gestión Todo Aqua",
+                message=f"Error al crear presupuesto. Contacte al administrador.",
+            )
+
+    def __tarifar(self):
 
         self.primera_partida = floor(self.metros * self.tarifa * 100) / 100.0
 
@@ -226,7 +313,7 @@ class Presupuesto_Lamina(Presupuesto):
 
         return self.total
 
-    def save_presupuesto(self, tipo):
+    def __save_presupuesto(self, tipo):
 
         query = "INSERT INTO PRESUPUESTOS (id_cliente, precio, total, tipo) VALUES (%s, %s, %s, %s);"
 
@@ -288,47 +375,77 @@ class Presupuesto_Lamina(Presupuesto):
 
         concepto = get_single(query, param)
 
-        presupuesto_object = Presupuesto_Lamina(
-            concepto["metros"],
-            presupuesto["id_cliente"],
-            concepto["modelo"],
-            concepto["tarifa"],
-        )
+        presupuesto_object = Presupuesto_Lamina()
 
-        presupuesto_object.precio = float(presupuesto["precio"])
+        presupuesto_object.id_cliente = int(presupuesto["id_cliente"])
+        presupuesto_object.metros = int(concepto["metros"])
+        presupuesto_object.modelo = concepto["modelo"]
+        presupuesto_object.tarifa = float(concepto["tarifa"])
         presupuesto_object.total = float(presupuesto["total"])
         presupuesto_object.fecha = presupuesto["fecha"]
-        presupuesto_object.impulsion = concepto["impulsion"]
-        presupuesto_object.impulsion_precio = concepto["impulsion_precio"]
-        presupuesto_object.barrefondo = concepto["barrefondo"]
-        presupuesto_object.barrefondo_precio = concepto["barrefondo_precio"]
-        presupuesto_object.skimmers = concepto["skimmer"]
-        presupuesto_object.skimmers_precio = concepto["skimmers_precio"]
-        presupuesto_object.sumidero = concepto["sumidero"]
-        presupuesto_object.sumidero_precio = concepto["sumidero_precio"]
-        presupuesto_object.sumidero_grande = concepto["sumidero_grande"]
-        presupuesto_object.sumidero_grande_precio = concepto["sumidero_grande_precio"]
-        presupuesto_object.nicho = concepto["nicho"]
-        presupuesto_object.nicho_precio = concepto["nicho_precio"]
-        presupuesto_object.otros = concepto["otros"]
+        presupuesto_object.impulsion = int(concepto["impulsion"])
+        presupuesto_object.impulsion_precio = float(concepto["impulsion_precio"])
+        presupuesto_object.barrefondo = int(concepto["barrefondo"])
+        presupuesto_object.barrefondo_precio = float(concepto["barrefondo_precio"])
+        presupuesto_object.skimmers = int(concepto["skimmer"])
+        presupuesto_object.skimmers_precio = float(concepto["skimmers_precio"])
+        presupuesto_object.sumidero = int(concepto["sumidero"])
+        presupuesto_object.sumidero_precio = float(concepto["sumidero_precio"])
+        presupuesto_object.sumidero_grande = int(concepto["sumidero_grande"])
+        presupuesto_object.sumidero_grande_precio = float(
+            concepto["sumidero_grande_precio"]
+        )
+        presupuesto_object.nicho = int(concepto["nicho"])
+        presupuesto_object.nicho_precio = float(concepto["nicho_precio"])
+        presupuesto_object.otros = int(concepto["otros"])
         presupuesto_object.otros_concepto = concepto["otros_concepto"]
-        presupuesto_object.otros_precio = concepto["otros_precio"]
-        presupuesto_object.primera_partida = concepto["primera_partida"]
-        presupuesto_object.segunda_partida = concepto["segunda_partida"]
-        presupuesto_object.tercera_partida = concepto["tercera_partida"]
+        presupuesto_object.otros_precio = float(concepto["otros_precio"])
+        presupuesto_object.primera_partida = float(concepto["primera_partida"])
+        presupuesto_object.segunda_partida = float(concepto["segunda_partida"])
+        presupuesto_object.tercera_partida = float(concepto["tercera_partida"])
 
-        return presupuesto
+        return presupuesto_object
+
+    def generar_archivo_presupuesto(
+        self, cliente: "Cliente", presupuesto: "Presupuesto_Lamina"
+    ):
+        pass
 
 
 class Presupuesto_Repa(Presupuesto):
 
-    def __init__(self, id_cliente: int):
-        super().__init__(id_cliente)
+    def __init__(self):
+        super().__init__()
 
         # tuples array ("concepto", precio)
-        self.concepto = []
+        self.concepto: list = []
 
-    def tarifar(self):
+    def create_presupuesto(self, id_cliente: int, conceptos: list):
+
+        self.id_cliente = id_cliente
+
+        for concepto in conceptos:
+            if concepto[0] and concepto[1]:
+                self.concepto.append(concepto)
+
+        messagebox.showinfo(
+            title="Sistema de Gestión Todo Aqua",
+            message=f"El presupuesto es de: €{self.__tarifar()}",
+        )
+
+        try:
+            self.__save_presupuesto("reparación")
+            messagebox.showinfo(
+                title="Sistema de Gestión Todo Aqua",
+                message=f"Presupuesto guardado correctamente.",
+            )
+        except:
+            messagebox.showerror(
+                title="Sistema de Gestión Todo Aqua",
+                message=f"Error al crear presupuesto. Contacte al administrador.",
+            )
+
+    def __tarifar(self):
         if self.concepto:
             for i in self.concepto:
                 self.precio += i[1]
@@ -337,7 +454,7 @@ class Presupuesto_Repa(Presupuesto):
 
         return self.total
 
-    def save_presupuesto(self, tipo):
+    def __save_presupuesto(self, tipo):
 
         query = "INSERT INTO PRESUPUESTOS (id_cliente, precio, total, tipo) VALUES (%s, %s, %s, %s);"
 
@@ -373,18 +490,20 @@ class Presupuesto_Repa(Presupuesto):
 
         return True
 
-    def pres_object_repa(self, id_pres):
+    def object_presupuesto_repa(self, id_pres):
 
         query = "SELECT * FROM PRESUPUESTOS WHERE ID_PRESUPUESTO = %s"
         param = (id_pres,)
 
-        presupuesto  = get_single(query, param)
+        presupuesto = get_single(query, param)
 
         query = "SELECT CONCEPTO FROM CONCEPTOS_PRESUPUESTO WHERE ID_PRESUPUESTO = %s;"
 
         concepto = get_single(query, param)[0].split(";")
 
-        presupuesto_object = Presupuesto_Repa(presupuesto["id_cliente"])
+        presupuesto_object = Presupuesto_Repa()
+
+        presupuesto_object.id_cliente = int(presupuesto["id_cliente"])
 
         for i in range(0, len(concepto), 2):
             if concepto[i] == "":
@@ -392,9 +511,13 @@ class Presupuesto_Repa(Presupuesto):
 
             presupuesto_object.concepto.append((concepto[i], concepto[i + 1]))
 
-        presupuesto_object.id_cliente = presupuesto["id_cliente"]
-        presupuesto_object.precio = presupuesto["precio"]
-        presupuesto_object.total = presupuesto["total"]
+        presupuesto_object.precio = float(presupuesto["precio"])
+        presupuesto_object.total = float(presupuesto["total"])
         presupuesto_object.fecha = presupuesto["fecha"]
 
         return presupuesto_object
+
+    def generar_archivo_presupuesto(
+        self, cliente: "Cliente", presupuesto: "Presupuesto_Repa"
+    ):
+        pass

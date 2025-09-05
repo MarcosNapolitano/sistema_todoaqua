@@ -1,9 +1,7 @@
-import datetime
 from math import floor
 from docx import Document
-from docx.shared import RGBColor
 from docx.shared import Pt
-from Utils.linker import linker, saver
+from Services.linker import linker, saver
 
 
 # for testing purposes
