@@ -12,12 +12,12 @@ class Llamada:
 
         query = "INSERT INTO LLAMADAS (telefono, nombre, motivo) VALUES (%s, %s, %s);"
 
-        data = (
+        param = (
             self.telefono,
             self.nombre,
             self.motivo,
         )
 
-        basic_exec(query, data)
+        basic_exec(query, param)
 
         return "\nLlamada registrada correctamente\n"

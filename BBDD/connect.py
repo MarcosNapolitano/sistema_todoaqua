@@ -28,6 +28,7 @@ load_dotenv()
 password = environ.get("PASS")
 
 
+# to do: implement Error messagebox and try catch
 def connect_db(
     func: Callable[Concatenate[cursor, P], R],
 ) -> Callable[P, R]:
