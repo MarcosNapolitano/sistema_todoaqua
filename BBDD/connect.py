@@ -71,7 +71,7 @@ def get_single(cursor, query, param):
 
 
 @connect_db
-def get_all(cursor, query, param=False):
+def get_all(cursor, query, param: tuple | None = None):
 
     if param:
         cursor.execute(query, param)

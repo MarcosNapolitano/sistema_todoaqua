@@ -24,9 +24,9 @@ class Cliente:
         return setattr(self, key, value)
 
     def create_client(
-        self, numero: int, nombre: str, direccion: str, localidad: str, provincia: str
+        self, telefono: int, nombre: str, direccion: str, localidad: str, provincia: str
     ):
-        self.numero = numero
+        self.telefono = telefono
         self.nombre = nombre
         self.direccion = direccion
         self.localidad = localidad

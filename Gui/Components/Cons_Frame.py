@@ -111,11 +111,6 @@ class Cons_Frame:
 
     def consulta_presupuestos(self):
 
-        id_presupuesto = int(self.entry1.get())
-
-        def request_presupuesto():
-            generar_presupuesto(id_presupuesto)
-
         self.tabview.add("Presupuestos")
 
         self.scrollable_frame = ct.CTkScrollableFrame(
@@ -241,6 +236,12 @@ class Cons_Frame:
 
         self.entry1 = ct.CTkEntry(self.imprimir, placeholder_text="Ingrese número")
         self.entry1.grid(column=0, row=0, padx=10, pady=10)
+
+        id_presupuesto = int(self.entry1.get() or 0)
+
+        def request_presupuesto():
+            generar_presupuesto(id_presupuesto)
+
         self.button1 = ct.CTkButton(
             self.imprimir, text="Imprimir Presupuesto", command=request_presupuesto
         )

@@ -1,6 +1,10 @@
 from tkinter import messagebox
 from BBDD.connect import get_single
 from Models.Cliente import Cliente
+from Services.generar_presupuesto_fuga_piscinas import generar_presupuesto_fuga_piscinas
+from Services.generar_presupuesto_repa import generar_presupuesto_repa
+from Services.generar_presupuesto_lamina import generar_presupuesto_lamina
+from Services.generar_presupuesto_todo_fugas import generar_presupuesto_todo_fugas
 from Models.Presupuesto import Presupuesto_Lamina
 from Models.Presupuesto import Presupuesto_Repa
 from Models.Presupuesto import Presupuesto_Fuga_Piscinas
@@ -23,7 +27,7 @@ def generar_presupuesto(id_pres: int):
             presupuesto = presupuesto.object_presupuesto_piscina(id_pres)
 
             try:
-                presupuesto.generar_archivo_presupuesto(cliente, presupuesto)
+                generar_presupuesto_fuga_piscinas(cliente, presupuesto)
 
             except:
                 messagebox.showerror(
@@ -41,7 +45,7 @@ def generar_presupuesto(id_pres: int):
             presupuesto = Presupuesto_Todo_Fugas()
             presupuesto = presupuesto.object_presupuesto_fuga(id_pres)
             try:
-                presupuesto.generar_archivo_presupuesto(cliente, presupuesto)
+                generar_presupuesto_todo_fugas(cliente, presupuesto)
 
             except:
                 messagebox.showerror(
@@ -59,7 +63,7 @@ def generar_presupuesto(id_pres: int):
             presupuesto = Presupuesto_Repa()
             presupuesto = presupuesto.object_presupuesto_repa(id_pres)
             try:
-                presupuesto.generar_archivo_presupuesto(cliente, presupuesto)
+                generar_presupuesto_repa(cliente, presupuesto)
 
             except:
                 messagebox.showerror(
@@ -77,7 +81,7 @@ def generar_presupuesto(id_pres: int):
             presupuesto = Presupuesto_Lamina()
             presupuesto = presupuesto.object_presupuesto_lamina(id_pres)
             try:
-                presupuesto.generar_archivo_presupuesto(cliente, presupuesto)
+                generar_presupuesto_lamina(cliente, presupuesto)
 
             except:
                 messagebox.showerror(

@@ -2,7 +2,7 @@ from BBDD.connect import basic_exec
 
 
 class Llamada:
-    def __init__(self, telefono: str, nombre: str, motivo: str):
+    def __init__(self, telefono: int, nombre: str, motivo: str):
 
         self.telefono = telefono
         self.nombre = nombre

@@ -1,7 +1,9 @@
 import datetime
 from docx.shared import Pt
 from docx import Document
-from docx.shared import RGBColor
+from docx.table import Table
+from Models.Cliente import Cliente
+from Models.Presupuesto import Presupuesto_Repa
 from Services.linker import linker, saver
 
 
@@ -10,70 +12,76 @@ from Services.linker import linker, saver
 # from test_presu import PR
 
 
-def generar_presupuesto_repa(cliente: object, presupuesto: object) -> True: 
+def generar_presupuesto_repa(cliente: "Cliente", presupuesto: "Presupuesto_Repa") -> True:
 
-	document_name: str = "08 - Presupuesto Reparación de Piscinas -f.docx"
-	document: object = Document(linker(document_name))
-	table: object = document.tables[0]
+    document_name = "08 - Presupuesto Reparación de Piscinas -f.docx"
+    document = Document(linker(document_name))
+    table = document.tables[0]
 
-	write_client_lamina(cliente, table, presupuesto)
-	concepto(document, presupuesto)
-	totales(document, presupuesto)
+    write_client_lamina(cliente, table, presupuesto)
+    concepto(document, presupuesto)
+    totales(document, presupuesto)
 
+    document.save(saver(document_name))
 
-	document.save(saver(document_name))
-
-	return True
-
-def write_client_lamina(cliente: object, table: object, presupuesto: object) -> None:
-
-	table.cell(0,1).paragraphs[0].add_run(f"{cliente.nombre}").bold = True
-	table.cell(1,1).paragraphs[0].add_run(f"{cliente.telefono}").bold = True
-	table.cell(1,3).paragraphs[0].add_run(f"{cliente.nif}").bold = True
-	table.cell(2,1).paragraphs[0].add_run(f"{cliente.direccion}, {cliente.localidad}, {cliente.provincia}.").bold = True
-	table.cell(3,1).paragraphs[0].add_run(f"{cliente.correo}").bold = True
-	table.cell(4,1).paragraphs[0].add_run("Presupuesto Nº el que sea wachin").bold = True
-	table.cell(4,3).paragraphs[0].add_run(f"{presupuesto.fecha.strftime('%x')}").bold = True
-
-	return
+    return True
 
 
-def concepto(document: object, presupuesto: object) -> None:
+def write_client_lamina(cliente: "Cliente", table: "Table", presupuesto: "Presupuesto_Repa") -> None:
 
-	index = 10
+    table.cell(0, 1).paragraphs[0].add_run(f"{cliente.nombre}").bold = True
+    table.cell(1, 1).paragraphs[0].add_run(f"{cliente.telefono}").bold = True
+    table.cell(1, 3).paragraphs[0].add_run(f"{cliente.nif}").bold = True
+    table.cell(2, 1).paragraphs[0].add_run(
+        f"{cliente.direccion}, {cliente.localidad}, {cliente.provincia}."
+    ).bold = True
+    table.cell(3, 1).paragraphs[0].add_run(f"{cliente.correo}").bold = True
+    table.cell(4, 1).paragraphs[0].add_run(
+        "Presupuesto Nº el que sea wachin"
+    ).bold = True
+    table.cell(4, 3).paragraphs[0].add_run(
+        f"{presupuesto.fecha.strftime('%x')}"
+    ).bold = True
 
-	# ver forma de hacer dinamico esto porque no calcula bien el espacio
+    return
 
-	for i in presupuesto.concepto:
 
-		document.paragraphs[index].add_run(f"• {i[0]}")
-		document.paragraphs[index].add_run(" " * 100).underline = True
-		document.paragraphs[index].add_run(f"{i[1]}0€")
+def concepto(document, presupuesto: "Presupuesto_Repa") -> None:
 
-		document.paragraphs[index].runs[0].font.size = Pt(14)
-		document.paragraphs[index].runs[1].font.size = Pt(14)
-		document.paragraphs[index].runs[2].font.size = Pt(14)
+    index = 10
 
-		index += 1
+    # ver forma de hacer dinamico esto porque no calcula bien el espacio
 
-	return
+    for i in presupuesto.concepto:
 
-def totales(document: object, presupuesto: object) -> None:
+        document.paragraphs[index].add_run(f"• {i[0]}")
+        document.paragraphs[index].add_run(" " * 100).underline = True
+        document.paragraphs[index].add_run(f"{i[1]}0€")
 
-	temp = document.paragraphs[16]
+        document.paragraphs[index].runs[0].font.size = Pt(14)
+        document.paragraphs[index].runs[1].font.size = Pt(14)
+        document.paragraphs[index].runs[2].font.size = Pt(14)
 
-	temp.add_run(f"{presupuesto.precio}€").bold = True
-	temp.runs[-1].font.size = Pt(14)
+        index += 1
 
-	temp = document.paragraphs[17]
+    return
 
-	temp.add_run(f"{presupuesto.total - presupuesto.precio}€").bold = True
-	temp.runs[-1].font.size = Pt(14)
 
-	temp = document.paragraphs[18]
+def totales(document, presupuesto: "Presupuesto_Repa") -> None:
 
-	temp.add_run(f"{presupuesto.total}€").bold = True
-	temp.runs[-1].font.size = Pt(18)
+    temp = document.paragraphs[16]
 
-	return
+    temp.add_run(f"{presupuesto.precio}€").bold = True
+    temp.runs[-1].font.size = Pt(14)
 
+    temp = document.paragraphs[17]
+
+    temp.add_run(f"{presupuesto.total - presupuesto.precio}€").bold = True
+    temp.runs[-1].font.size = Pt(14)
+
+    temp = document.paragraphs[18]
+
+    temp.add_run(f"{presupuesto.total}€").bold = True
+    temp.runs[-1].font.size = Pt(18)
+
+    return

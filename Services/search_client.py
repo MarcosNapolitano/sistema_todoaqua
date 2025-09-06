@@ -5,41 +5,48 @@ from tkinter import messagebox
 
 def search_client(name):
 
-	query = "SELECT ID_CLIENTE, NOMBRE, LOCALIDAD, PROVINCIA FROM CLIENTES WHERE NOMBRE ILIKE %s LIMIT 5";
+    query = "SELECT ID_CLIENTE, NOMBRE, LOCALIDAD, PROVINCIA FROM CLIENTES WHERE NOMBRE ILIKE %s LIMIT 5"
 
-	data = (f"%{name}%", )
+    param = (f"%{name}%",)
 
-	res = get_all(query, data)
+    clientes = get_all(query, param)
 
-	if not res:
-		messagebox.showerror(title="Sistema de Gestión Todo Aqua", message="Cliente inexistente.")
-		return False
+    if not clientes:
+        messagebox.showerror(
+            title="Sistema de Gestión Todo Aqua", message="Cliente inexistente."
+        )
+        return False
 
-	count = 1
+    count = 1
 
-	if len(res) > 1:
+    if len(clientes) > 1:
 
-		text = "Varios clientes coinciden en nombre:\n"
+        text = "Varios clientes coinciden en nombre:\n"
 
-		for i in res:
-			text += f"{count} | {i[1]} - {i[2]} - {i[3]}\n"
-			count += 1
+        for cliente in clientes:
+            text += f"{count} | {cliente[1]} - {cliente[2]} - {cliente[3]}\n"
+            count += 1
 
-		text += "Por favor elija el número del usuario."
+        text += "Por favor elija el número del usuario."
 
-		id_cliente = None
+        id_cliente = 0
 
-		while id_cliente is None:
-			try:
-				dialog = ct.CTkInputDialog(text=text, title="Elija usuario")
-				id_cliente = int(dialog.get_input()) # waits for input
-			except:
-				messagebox.showerror(title="Sistema de Gestión Todo Aqua", message="Por favor ingrese un número")
+        while not id_cliente:
+            try:
+                dialog = ct.CTkInputDialog(text=text, title="Elija usuario")
+                id = int(dialog.get_input() or 0)  # waits for input
 
+                if id:
+                    id_cliente = id
+            except:
+                messagebox.showerror(
+                    title="Sistema de Gestión Todo Aqua",
+                    message="Por favor ingrese un número",
+                )
 
-		id_cliente = res[id_cliente-1][0]
-	else:
+        id_cliente = clientes[id_cliente - 1][0]
+    else:
 
-		id_cliente = res[0][0]
+        id_cliente = clientes[0][0]
 
-	return id_cliente
+    return id_cliente

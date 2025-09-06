@@ -127,11 +127,6 @@ class Presupuesto_Fuga_Piscinas(Presupuesto):
 
         return presupuesto_object
 
-    def generar_archivo_presupuesto(
-        self, cliente: "Cliente", presupuesto: "Presupuesto_Fuga_Piscinas"
-    ):
-        pass
-
 
 class Presupuesto_Todo_Fugas(Presupuesto):
 
@@ -223,11 +218,6 @@ class Presupuesto_Todo_Fugas(Presupuesto):
         presupuesto_object.fecha = presupuesto["fecha"]
 
         return presupuesto_object
-
-    def generar_archivo_presupuesto(
-        self, cliente: "Cliente", presupuesto: "Presupuesto_Todo_Fugas"
-    ):
-        pass
 
 
 class Presupuesto_Lamina(Presupuesto):
@@ -406,11 +396,6 @@ class Presupuesto_Lamina(Presupuesto):
 
         return presupuesto_object
 
-    def generar_archivo_presupuesto(
-        self, cliente: "Cliente", presupuesto: "Presupuesto_Lamina"
-    ):
-        pass
-
 
 class Presupuesto_Repa(Presupuesto):
 
@@ -516,8 +501,3 @@ class Presupuesto_Repa(Presupuesto):
         presupuesto_object.fecha = presupuesto["fecha"]
 
         return presupuesto_object
-
-    def generar_archivo_presupuesto(
-        self, cliente: "Cliente", presupuesto: "Presupuesto_Repa"
-    ):
-        pass

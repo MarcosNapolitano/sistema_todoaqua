@@ -74,7 +74,7 @@ class User_Frame:
 
     def create_user(self):
 
-        numero = int(self.user_frame_entry_1.get())
+        numero = int(self.user_frame_entry_1.get().replace("-", "") or 0)
         nombre = self.user_frame_entry_2.get()
         direccion = self.user_frame_entry_3.get()
         localidad = self.user_frame_entry_4.get()
@@ -106,7 +106,7 @@ class User_Frame:
 
     def create_llamada(self):
 
-        numero = self.user_frame_entry_1.get()
+        numero = int(self.user_frame_entry_1.get().replace("-",""))
         nombre = self.user_frame_entry_2.get()
         motivo = self.user_frame_entry_3.get()
 
@@ -121,7 +121,7 @@ class User_Frame:
 
             llamada = Llamada(numero, nombre, motivo)
 
-            llamada.save_client()
+            llamada.save_llamada()
 
             messagebox.showinfo(
                 title="Sistema de Gestión Todo Aqua",
