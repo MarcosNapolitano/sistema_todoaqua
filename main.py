@@ -3,7 +3,6 @@ from images import Images
 from Gui.Components.Side_Frame import Side_Frame
 from Gui.Components.User_Frame import User_Frame
 from Gui.Components.Pres_Frame import Pres_Frame
-from Gui.Components.Actu_Frame import Actu_Frame
 from Gui.Components.Cons_Frame import Cons_Frame
 import os
 
@@ -26,7 +25,6 @@ class App(ct.CTk):
         self.side_frame = Side_Frame(self, self.images)
         self.user_frame = User_Frame(self, self.images)
         self.pres_frame = Pres_Frame(self, self.images)
-        self.actu_frame = Actu_Frame(self, self.images)
         self.cons_frame = Cons_Frame(self, self.images)
 
         # select default frame
@@ -50,12 +48,6 @@ class App(ct.CTk):
             self.pres_frame.presupuesto_frame_3.grid_forget()
             self.pres_frame.presupuesto_frame_4.grid_forget()
             self.side_frame.presupuesto.configure(fg_color="transparent")
-        if name == "actuaciones":
-            self.actu_frame.actuaciones_frame.grid(row=0, column=1, sticky="nsew")
-            self.side_frame.actuaciones.configure(fg_color=("gray75", "gray25"))
-        else:
-            self.actu_frame.actuaciones_frame.grid_forget()
-            self.side_frame.actuaciones.configure(fg_color="transparent")
         if name == "consultas":
             self.cons_frame.consultas_frame.grid(row=0, column=1, sticky="nsew")
             self.cons_frame.tabview.delete("Clientes")

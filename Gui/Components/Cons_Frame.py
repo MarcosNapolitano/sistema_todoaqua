@@ -237,9 +237,8 @@ class Cons_Frame:
         self.entry1 = ct.CTkEntry(self.imprimir, placeholder_text="Ingrese número")
         self.entry1.grid(column=0, row=0, padx=10, pady=10)
 
-        id_presupuesto = int(self.entry1.get() or 0)
-
         def request_presupuesto():
+            id_presupuesto = int(self.entry1.get() or 0)
             generar_presupuesto(id_presupuesto)
 
         self.button1 = ct.CTkButton(

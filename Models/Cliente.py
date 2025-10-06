@@ -109,17 +109,21 @@ class Cliente:
         self, client_object: "Cliente", client: dict, property: str
     ):
 
-        while not client[property]:
+        if client[property]: return
+
+        new_property = None
+
+        while not new_property:
 
             dialog = ct.CTkInputDialog(
                 text=f"Ingrese {property.title()} Cliente:",
                 title="Sistema de Gestión Todo Aqua",
             )
             new_property = dialog.get_input()
-            if new_property:
-                client_object[property] = property
+
+        client_object[property] = new_property
 
         query = f"UPDATE CLIENTES SET {property.upper()} = %s WHERE ID_CLIENTE = %s;"
-        param = (property, client["id_cliente"])
+        param = (new_property, client["id_cliente"])
 
         update_single(query, param)

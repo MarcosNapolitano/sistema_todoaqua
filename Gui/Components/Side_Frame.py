@@ -50,19 +50,19 @@ class Side_Frame():
  
        self.presupuesto.grid(row=2, column=0, sticky="ew")
 
-       # third panel
-       self.actuaciones = ct.CTkButton(self.navigation_frame, corner_radius=0, 
-              height=40, 
-              border_spacing=10, 
-              text="Actuaciones",
-              fg_color="transparent", 
-              text_color=("gray10", "gray90"), 
-              hover_color=("gray70", "gray30"),
-              image=images.home_image, 
-              anchor="w", 
-              command=App.actuaciones_event)
-        
-       self.actuaciones.grid(row=3, column=0, sticky="new")
+       # # third panel
+       # self.actuaciones = ct.CTkButton(self.navigation_frame, corner_radius=0, 
+       #        height=40, 
+       #        border_spacing=10, 
+       #        text="Actuaciones",
+       #        fg_color="transparent", 
+       #        text_color=("gray10", "gray90"), 
+       #        hover_color=("gray70", "gray30"),
+       #        image=images.home_image, 
+       #        anchor="w", 
+       #        command=App.actuaciones_event)
+       #
+       # self.actuaciones.grid(row=3, column=0, sticky="new")
 
        # fourth panel
        self.consultas = ct.CTkButton(self.navigation_frame, 
@@ -81,7 +81,7 @@ class Side_Frame():
 
  
        # color mode
-       self.appearance_mode_menu = ct.CTkOptionMenu(self.navigation_frame, values=["Light", "Dark", "System"],
+       self.appearance_mode_menu = ct.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
                 command=App.change_appearance_mode_event)
         
        self.appearance_mode_menu.grid(row=5, column=0, 

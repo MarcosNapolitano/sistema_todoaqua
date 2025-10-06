@@ -57,14 +57,14 @@ class Images:
         )
 
         self.presupuesto_image = ct.CTkImage(
-            light_image=Image.open(os.path.join(self.image_path, "file-pen-solid.png")),
-            dark_image=Image.open(os.path.join(self.image_path, "file-pen-solid.png")),
+            light_image=Image.open(os.path.join(self.image_path, "file-pen-dark.png")),
+            dark_image=Image.open(os.path.join(self.image_path, "file-pen-light.png")),
             size=(20, 20),
         )
 
         self.consultas_image = ct.CTkImage(
-            light_image=Image.open(os.path.join(self.image_path, "searchengin.png")),
-            dark_image=Image.open(os.path.join(self.image_path, "searchengin.png")),
+            light_image=Image.open(os.path.join(self.image_path, "search_dark.png")),
+            dark_image=Image.open(os.path.join(self.image_path, "search_light.png")),
             size=(20, 20),
         )
 
