@@ -23,17 +23,24 @@ class Cons_Frame:
         )
 
         # notebook
-        self.tabview = ct.CTkTabview(master=self.consultas_frame)
+        self.tabview = ct.CTkTabview(self.consultas_frame)
         self.tabview.pack(anchor="w", padx=20, pady=20, fill="both", expand=True)
 
-        self.consulta_cliente()
-        self.consulta_presupuestos()
+        self.tab_clientes = self.tabview.add("Clientes")
+        self.tab_presupuestos = self.tabview.add("Presupuestos")
+
+        self._initialized = False
 
         return
 
-    def consulta_cliente(self):
+    def init_tabs(self):
+        if self._initialized: return
 
-        self.tabview.add("Clientes")
+        self.consulta_cliente()
+        self.consulta_presupuestos()
+        self._initialized = True
+
+    def consulta_cliente(self):
 
         self.scrollable_frame = ct.CTkScrollableFrame(
             self.tabview.tab("Clientes"), orientation="horizontal"
@@ -110,8 +117,6 @@ class Cons_Frame:
                 self.row1.grid(row=i + 1, column=j, padx=10, pady=10, sticky="w")
 
     def consulta_presupuestos(self):
-
-        self.tabview.add("Presupuestos")
 
         self.scrollable_frame = ct.CTkScrollableFrame(
             self.tabview.tab("Presupuestos"), orientation="horizontal"

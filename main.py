@@ -4,8 +4,6 @@ from Gui.Components.Side_Frame import Side_Frame
 from Gui.Components.User_Frame import User_Frame
 from Gui.Components.Pres_Frame import Pres_Frame
 from Gui.Components.Cons_Frame import Cons_Frame
-import os
-
 
 class App(ct.CTk):
     def __init__(self):
@@ -50,10 +48,7 @@ class App(ct.CTk):
             self.side_frame.presupuesto.configure(fg_color="transparent")
         if name == "consultas":
             self.cons_frame.consultas_frame.grid(row=0, column=1, sticky="nsew")
-            self.cons_frame.tabview.delete("Clientes")
-            self.cons_frame.tabview.delete("Presupuestos")
-            self.cons_frame.consulta_cliente()
-            self.cons_frame.consulta_presupuestos()
+            self.cons_frame.init_tabs()
             self.side_frame.consultas.configure(fg_color=("gray75", "gray25"))
         else:
             self.cons_frame.consultas_frame.grid_forget()
@@ -78,4 +73,4 @@ class App(ct.CTk):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-    app.iconbitmap(os.path.join(app.images.image_path, "aqua.ico"))
+    # app.iconbitmap(os.path.join(app.images.image_path, "aqua.ico"))

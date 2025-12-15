@@ -1,3 +1,4 @@
+from logging import error
 from tkinter import messagebox
 from Models.Cliente import Cliente
 from Models.Tarifas import tarifas_fuga_piscinas
@@ -144,7 +145,6 @@ class Presupuesto_Todo_Fugas(Presupuesto):
         self.superficie = superficie
         self.distancia = distancia
         self.tipo_tuberia = tipo_tuberia
-
         messagebox.showinfo(
             title="Sistema de Gestión Todo Aqua",
             message=f"El presupuesto es de: €{self.__tarifar()}",
@@ -158,6 +158,7 @@ class Presupuesto_Todo_Fugas(Presupuesto):
             )
 
         except:
+            print(error)
             messagebox.showerror(
                 title="Sistema de Gestión Todo Aqua",
                 message=f"Error al crear presupuesto. Contacte al administrador.",
@@ -181,14 +182,13 @@ class Presupuesto_Todo_Fugas(Presupuesto):
 
     def __save_presupuesto(self, tipo):
 
-        query = "INSERT INTO PRESUPUESTOS (id_cliente, precio, total, tipo, skimmer, superficie, tipo_tuberia, distancia) VALUES (%s, %s, %s, %s, %s, %s, %s);"
+        query = "INSERT INTO PRESUPUESTOS (id_cliente, precio, total, tipo, superficie, tipo_tuberia, distancia) VALUES (%s, %s, %s, %s, %s, %s, %s);"
 
         data = (
             self.id_cliente,
             self.precio,
             self.total,
             tipo,
-            False,
             self.superficie,
             self.tipo_tuberia,
             self.distancia,
@@ -267,7 +267,6 @@ class Presupuesto_Lamina(Presupuesto):
             )
 
         except Exception as error:
-            print(error)
             messagebox.showerror(
                 title="Sistema de Gestión Todo Aqua",
                 message=f"Error al crear presupuesto. Contacte al administrador.",
@@ -377,7 +376,7 @@ class Presupuesto_Lamina(Presupuesto):
         presupuesto_object.impulsion_precio = float(concepto["impulsion_precio"])
         presupuesto_object.barrefondo = int(concepto["barrefondo"])
         presupuesto_object.barrefondo_precio = float(concepto["barrefondo_precio"])
-        presupuesto_object.skimmers = int(concepto["skimmer"])
+        presupuesto_object.skimmers = int(concepto["skimmers"])
         presupuesto_object.skimmers_precio = float(concepto["skimmers_precio"])
         presupuesto_object.sumidero = int(concepto["sumidero"])
         presupuesto_object.sumidero_precio = float(concepto["sumidero_precio"])

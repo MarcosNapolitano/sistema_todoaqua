@@ -37,7 +37,7 @@ def write_client_lamina(cliente: "Cliente", table: "Table", presupuesto: "Presup
     ).bold = True
     table.cell(3, 1).paragraphs[0].add_run(f"{cliente.correo}").bold = True
     table.cell(4, 1).paragraphs[0].add_run(
-        "Presupuesto Nº el que sea wachin"
+        "INGRESAR NUMERO"
     ).bold = True
     table.cell(4, 3).paragraphs[0].add_run(
         f"{presupuesto.fecha.strftime('%x')}"

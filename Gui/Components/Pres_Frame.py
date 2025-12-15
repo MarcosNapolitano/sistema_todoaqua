@@ -33,7 +33,7 @@ class Pres_Frame:
 
     def create_presupuesto_piscina(self):
 
-        cliente = int(self.presupuesto_frame_entry_1.get())
+        cliente = self.presupuesto_frame_entry_1.get()
         largo = int(self.presupuesto_frame_entry_2.get())
         ancho = int(self.presupuesto_frame_entry_3.get())
         distancia = int(self.presupuesto_frame_entry_4.get())
@@ -70,15 +70,15 @@ class Pres_Frame:
 
     def create_presupuesto_repa(self):
 
-        cliente = int(self.presupuesto_frame_entry_1.get())
+        cliente = self.presupuesto_frame_entry_1.get()
         concepto_1 = self.presupuesto_frame_entry_2.get()
-        precio_1 = float(self.presupuesto_frame_entry_3.get())
+        precio_1 = float(self.presupuesto_frame_entry_3.get() or 0)
         concepto_2 = self.presupuesto_frame_entry_4.get()
-        precio_2 = float(self.presupuesto_frame_entry_5.get())
+        precio_2 = float(self.presupuesto_frame_entry_5.get() or 0)
         concepto_3 = self.presupuesto_frame_entry_6.get()
-        precio_3 = float(self.presupuesto_frame_entry_7.get())
+        precio_3 = float(self.presupuesto_frame_entry_7.get() or 0)
         concepto_4 = self.presupuesto_frame_entry_8.get()
-        precio_4 = float(self.presupuesto_frame_entry_9.get())
+        precio_4 = float(self.presupuesto_frame_entry_9.get() or 0)
 
         if cliente == "" or concepto_1 == "" or precio_1 == "":
             self.presupuesto_frame_label_100.configure(text="Faltan Datos.")
@@ -131,9 +131,9 @@ class Pres_Frame:
                 )
                 return False
 
-        cliente = int(self.presupuesto_frame_entry_1.get())
-        metros = float(self.presupuesto_frame_entry_2.get())
-        tarifa = float(self.presupuesto_frame_entry_3.get())
+        cliente = self.presupuesto_frame_entry_1.get()
+        metros = float(self.presupuesto_frame_entry_2.get() or 0)
+        tarifa = self.presupuesto_frame_entry_3.get()
         modelo = self.presupuesto_frame_entry_4.get()
         impulsiones = int(self.presupuesto_frame_entry_5.get())
         barrefondos = int(self.presupuesto_frame_entry_6.get())
@@ -142,9 +142,9 @@ class Pres_Frame:
         sumideros = int(self.presupuesto_frame_entry_9.get())
         sumideros_grande = int(self.presupuesto_frame_entry_10.get())
         concepto_1 = self.presupuesto_frame_entry_11.get()
-        precio_1 = float(self.presupuesto_frame_entry_12.get())
+        precio_1 = float(self.presupuesto_frame_entry_12.get() or 0)
 
-        if cliente == "" or metros == "":
+        if cliente == "" or metros == 0:
             self.presupuesto_frame_label_100.configure(text="Faltan Datos.")
             return
 
@@ -199,7 +199,7 @@ class Pres_Frame:
 
     def create_presupuesto_fuga(self):
 
-        cliente = int(self.presupuesto_frame_entry_1.get())
+        cliente = self.presupuesto_frame_entry_1.get()
         superficie = int(self.presupuesto_frame_entry_2.get())
         distancia = int(self.presupuesto_frame_entry_3.get())
         tipo = self.presupuesto_frame_entry_4.get()

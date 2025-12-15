@@ -16,4 +16,3 @@ GRANT ALL ON SCHEMA public TO aqua;
 CREATE EXTENSION IF NOT EXISTS adminpack;
 
 pg_restore -U aqua -d aqua -W -v --no-owner --role=aqua "FILE"
-

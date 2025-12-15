@@ -76,7 +76,7 @@ def generar_presupuesto(id_pres: int):
             del cliente
             del presupuesto
 
-        case "lámina armada":
+        case "lamina armada":
 
             presupuesto = Presupuesto_Lamina()
             presupuesto = presupuesto.object_presupuesto_lamina(id_pres)
